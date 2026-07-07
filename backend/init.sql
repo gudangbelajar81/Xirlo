@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS settings (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  app_name VARCHAR(100) NOT NULL DEFAULT 'ALVES POS',
+  app_name VARCHAR(100) NOT NULL DEFAULT 'Xirlo POS',
   logo_url VARCHAR(255) DEFAULT '',
   theme_mode ENUM('light', 'dark') DEFAULT 'light',
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS transaction_items (
 INSERT IGNORE INTO users (username, password, role) VALUES ('superadmin', '$2b$10$yiNAp6AsvwINjp6SpE..zOHRI9QE.64A821H4RFhfwxDDnNfPs7r6', 'super_admin');
 
 -- Insert Default Settings
-INSERT IGNORE INTO settings (id, app_name) VALUES (1, 'Toko HT - Gula Jawa');
+INSERT IGNORE INTO settings (id, app_name) VALUES (1, 'Xirlo POS');
 
 -- Insert Sample Product
 INSERT IGNORE INTO products (name, price, stock, color_desc, category) VALUES 
