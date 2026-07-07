@@ -960,7 +960,7 @@ async function startServer() {
     }
   });
 
-  const PORT = APP_PORT;
+  const PORT = process.env.PORT || APP_PORT;
   const server = 
   // Vendor Portal API (Secret)
   app.post('/api/vendor/generate-key', authenticateToken, requireSuperAdmin, async (req, res) => {
