@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+:root, [data-theme='light'] {
+  /* LATTE & MIDNIGHT GOLD THEME - LIGHT */
+  --bg-primary: #F9F6F0;     /* Halaman utama Mocca Halus */
+  --bg-secondary: #FFFFFF;   /* Card produk & Keranjang putih bersih */
+  --bg-dark-panel: #2D1810;  /* Sidebar & Header Espresso Gelap */
+  --text-primary: #3E2723;   /* Teks utama (di area terang) */
+  --text-secondary: #795548; /* Teks sekunder (abu-abu coklat) */
+  --text-on-dark: #FFFFFF;   /* Teks di atas panel gelap */
+  --accent-color: #A0522D;   /* Emas/Coklat Terang (Sienna) */
+  --accent-hover: #8B4513;   /* Hover lebih gelap */
+  --border-color: #E2D9D1;   /* Border lembut */
+  --shadow-sm: 0 4px 12px rgba(45, 24, 16, 0.08);
+  --shadow-md: 0 8px 32px rgba(45, 24, 16, 0.15); 
+  --shadow-glow: 0 0 20px rgba(160, 82, 45, 0.3);
+  --success: #2e7d32;
+  --danger: #d32f2f;
+  --warning: #ed6c02;
+  
+  /* Theme Builder Defaults */
+  --border-radius: 12px;
+  --font-family: 'Inter', sans-serif;
+}
+
+[data-theme='dark'] {
+  /* LATTE & MIDNIGHT GOLD THEME - DARK */
+  --bg-primary: #121212;     /* Karbon Gelap */
+  --bg-secondary: #1E1611;   /* Coklat Abu Gelap (Card/Keranjang) */
+  --bg-dark-panel: #0A0A0A;  /* Hitam Pekat (Sidebar/Header) */
+  --text-primary: #F5F5F5;   /* Teks Utama Terang */
+  --text-secondary: #A0A0A0; /* Teks Sekunder */
+  --text-on-dark: #F5F5F5;   /* Teks di panel */
+  --accent-color: #D4A373;   /* Emas Terang */
+  --accent-hover: #FAEDCD;   
+  --border-color: #33261C;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.8);
+  --shadow-glow: 0 0 20px rgba(212, 163, 115, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family);
+  font-weight: 600;
+}
+
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.2s ease;
+}
+
+input, select, textarea {
+  font-family: var(--font-family);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(var(--bg-secondary-rgb, 255, 255, 255), 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--border-color-rgb, 226, 217, 209), 0.4);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+}
+
+.glass-dark {
+  background: rgba(45, 24, 16, 0.95); /* Espresso semi-transparan */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+[data-theme='dark'] .glass {
+  background: rgba(30, 22, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='dark'] .glass-dark {
+  background: rgba(10, 10, 10, 0.95);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
