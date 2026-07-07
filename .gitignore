@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+.env
+*.exe
+database.sqlite*
+uploads/
+*.pem
+.DS_Store
