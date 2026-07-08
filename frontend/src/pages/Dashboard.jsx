@@ -10,6 +10,7 @@ export default function Dashboard({ user, appSettings, license }) {
   const [cart, setCart] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showMobileCart, setShowMobileCart] = useState(false);
   const [transactionId, setTransactionId] = useState(null);
   const [outOfStockMsg, setOutOfStockMsg] = useState('');
   const [promoNominal, setPromoNominal] = useState('2000');
@@ -441,7 +442,7 @@ export default function Dashboard({ user, appSettings, license }) {
         </div>
       </div>
 
-      {/* ── AREA KERANJANG ── */}
+      {/* ── AREA KERANJANG (Desktop/Tablet) ── */}
       <div className="cart-area glass-dark">
         <div className="cart-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2><ShoppingCart size={20} style={{ display: 'inline', marginRight: '8px' }} /> Keranjang</h2>
@@ -541,6 +542,149 @@ export default function Dashboard({ user, appSettings, license }) {
             <div className="modal-icon">
               <AlertCircle size={64} color="var(--accent-color)" />
             </div>
+
+      {/* ── FLOATING CART BUTTON (Mobile only) ── */}
+      {cart.length >= 0 && (
+        <button
+          onClick={() => setShowMobileCart(true)}
+          style={{
+            display: 'none',
+            position: 'fixed',
+            bottom: '80px',
+            right: '20px',
+            zIndex: 999,
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            background: 'var(--accent-color)',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            gap: '2px',
+            fontSize: '0.6rem',
+            fontWeight: 'bold'
+          }}
+          className="mobile-cart-fab"
+        >
+          <ShoppingCart size={22} />
+          {cart.length > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-4px',
+              right: '-4px',
+              background: '#e53e3e',
+              color: 'white',
+              borderRadius: '50%',
+              width: '20px',
+              height: '20px',
+              fontSize: '0.7rem',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px solid var(--bg-primary)'
+            }}>{cart.length}</span>
+          )}
+        </button>
+      )}
+
+      {/* ── MOBILE CART FULLSCREEN SHEET ── */}
+      {showMobileCart && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'var(--bg-dark-panel)',
+          color: 'var(--text-on-dark)'
+        }}>
+          {/* Sheet Header */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '16px 20px',
+            borderBottom: '1px solid var(--border-color)',
+            background: 'var(--bg-dark-panel)'
+          }}>
+            <h2 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ShoppingCart size={20} /> Keranjang ({cart.length} item)
+            </h2>
+            <button onClick={() => setShowMobileCart(false)} style={{
+              background: 'var(--bg-primary)', border: 'none', color: 'var(--text-primary)',
+              borderRadius: '50%', width: '32px', height: '32px', fontSize: '1.2rem',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>✕</button>
+          </div>
+
+          {/* Cart Items */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+            {cart.length === 0 ? (
+              <div style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '60px', fontSize: '1rem' }}>Belum ada produk dipilih</div>
+            ) : (
+              cart.map(item => {
+                const p = Number(item.price);
+                const q = Number(item.qty);
+                const effPrice = calcEffPrice(p, q);
+                const subtotal = effPrice * q;
+                const diskon = q >= 2 && promo > 0;
+                return (
+                  <div key={item.id} style={{
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    padding: '12px 0', borderBottom: '1px dashed var(--border-color)'
+                  }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: '600', fontSize: '0.95rem' }}>{item.name}</div>
+                      {diskon ? (
+                        <div style={{ fontSize: '0.8rem' }}>
+                          <span style={{ textDecoration: 'line-through', color: 'var(--text-secondary)' }}>Rp{fmt(p)}</span>
+                          {' '}<span style={{ color: 'var(--success)', fontWeight: 'bold' }}>Rp{fmt(effPrice)}</span>
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Rp{fmt(p)}</div>
+                      )}
+                      <div style={{ color: 'var(--accent-color)', fontWeight: 'bold', fontSize: '0.9rem' }}>= Rp{fmt(subtotal)}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', borderRadius: '8px', padding: '4px 8px' }}>
+                      <button className="qty-btn" onClick={() => updateQty(item.id, -1)} style={{ color: '#333' }}><Minus size={14} /></button>
+                      <span style={{ color: '#333', fontWeight: '700', minWidth: '20px', textAlign: 'center' }}>{q}</span>
+                      <button className="qty-btn" onClick={() => updateQty(item.id, 1)} style={{ color: '#333' }}><Plus size={14} /></button>
+                    </div>
+                    <button onClick={() => removeFromCart(item.id)} style={{
+                      background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '4px'
+                    }}><Trash2 size={18} /></button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Sheet Footer */}
+          <div style={{
+            padding: '16px 20px',
+            borderTop: '1px dashed var(--border-color)',
+            background: 'var(--bg-dark-panel)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', fontSize: '1.1rem', fontWeight: 'bold' }}>
+              <span>Total Bayar</span>
+              <span style={{ color: 'var(--accent-color)' }}>Rp {fmt(total)}</span>
+            </div>
+            <button
+              className="btn-primary"
+              style={{ width: '100%', padding: '14px', fontSize: '1rem', borderRadius: '12px' }}
+              disabled={cart.length === 0}
+              onClick={() => { setShowMobileCart(false); setShowConfirm(true); }}
+            >
+              Bayar Sekarang
+            </button>
+          </div>
+        </div>
+      )}
             <h3>Konfirmasi Pembayaran</h3>
             <p style={{ fontSize: '1.1rem', marginBottom: '16px' }}>
               Total Tagihan: <strong style={{ color: 'var(--accent-color)', fontSize: '1.3rem' }}>Rp{Number(totalAmount).toLocaleString('id-ID')}</strong><br/>

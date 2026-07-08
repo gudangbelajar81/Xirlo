@@ -148,8 +148,8 @@
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
 }
 
 .product-card {
@@ -185,7 +185,7 @@
 
 .product-image {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 4/3;
   background-color: var(--bg-primary);
   border-radius: var(--border-radius);
   object-fit: cover;
@@ -193,13 +193,14 @@
 
 .product-image-placeholder {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 4/3;
   background-color: var(--bg-primary);
   border-radius: var(--border-radius);
   display: flex;
   justify-content: center;
   align-items: center;
   color: var(--text-secondary);
+  font-size: 0.8rem;
 }
 
 .product-info {
@@ -643,10 +644,15 @@
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .cart-area {
-    width: 320px;
+    width: 300px;
+  }
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
   }
 }
 
+/* ─── TABLET (768px) ─── */
 @media (max-width: 768px) {
   .settings-container {
     flex-direction: column;
@@ -659,33 +665,99 @@
   .settings-tab {
     white-space: nowrap;
   }
+
+  /* POS layout stacks vertically on tablet */
   .dashboard-layout {
     flex-direction: column;
   }
   .products-area {
     flex: 1;
+    overflow-y: auto;
   }
+
+  /* Cart becomes a bottom drawer on tablet */
   .cart-area {
     width: 100%;
-    height: 350px;
+    max-height: 280px;
     border-left: none;
     border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
   }
+
+  /* Sidebar becomes a bottom bar on tablet */
   .app-container {
     flex-direction: column;
   }
   .sidebar {
     width: 100%;
-    height: 60px;
+    height: 56px;
     flex-direction: row;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
-    padding: 0 16px;
+    padding: 0 12px;
+    gap: 16px;
+    order: -1;
   }
   .theme-toggle {
     margin-top: 0;
     margin-left: auto;
   }
+}
+
+/* ─── MOBILE (480px) ─── */
+@media (max-width: 480px) {
+  /* Sidebar / bottom nav */
+  .sidebar {
+    height: 56px;
+    gap: 8px;
+    padding: 0 8px;
+  }
+  .nav-item {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Top header compact */
+  .top-header {
+    height: 56px;
+    padding: 0 12px;
+  }
+
+  /* Product grid: exactly 2 columns full-width */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0;
+  }
+  .product-card {
+    padding: 10px;
+    gap: 8px;
+  }
+  .product-image,
+  .product-image-placeholder {
+    aspect-ratio: 1;
+  }
+  .product-name {
+    font-size: 0.8rem;
+  }
+  .product-price {
+    font-size: 0.95rem;
+  }
+  .product-stock {
+    font-size: 0.7rem;
+  }
+
+  /* Products area fills entire screen on mobile */
+  .products-area {
+    padding: 12px !important;
+  }
+
+  /* Cart is HIDDEN from normal flow on mobile — shown as floating sheet */
+  .cart-area {
+    display: none !important;
+  }
+
+  /* Floating Cart FAB & Sheet are handled via inline styles in Dashboard.jsx */
 }
 
 
@@ -713,6 +785,12 @@
 .main-content > *:not(.app-watermark) {
   position: relative;
   z-index: 1;
+}
+
+@media (max-width: 480px) {
+  .mobile-cart-fab {
+    display: flex !important;
+  }
 }
 
 /* THERMAL PRINT STYLES */
