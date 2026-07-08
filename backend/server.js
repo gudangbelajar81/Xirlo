@@ -170,7 +170,7 @@ app.post('/api/register', async (req, res) => {
     const users = await db.all('SELECT id FROM users WHERE username = ?', [username]);
     if (users.length > 0) return res.status(400).json({ error: 'Username sudah dipakai toko lain.' });
 
-    await db.run('BEGIN TRANSACTION');
+    await db.run('BEGIN');
 
     // Create Tenant
     const tenantResult = await db.run(
@@ -380,7 +380,7 @@ app.post('/api/transactions', authenticateToken, async (req, res) => {
   const { items, total_amount, payment_method } = req.body;
   
   try {
-    await db.run('BEGIN TRANSACTION');
+    await db.run('BEGIN');
     
     // Verify stock
     for (const item of items) {
@@ -508,7 +508,7 @@ app.put('/api/transactions/:id', authenticateToken, requireSuperAdmin, async (re
 app.delete('/api/transactions/:id', authenticateToken, requireSuperAdmin, async (req, res) => {
   try {
     const reason = req.body.reason || 'Tidak ada alasan';
-    await db.run('BEGIN TRANSACTION');
+    await db.run('BEGIN');
     
     // Get transaction details for WA
     const tx = await db.get('SELECT total_amount FROM transactions WHERE id = ? AND tenant_id = ?', [req.params.id, req.user.tenant_id]);
