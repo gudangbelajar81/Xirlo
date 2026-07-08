@@ -150,9 +150,6 @@ export default function Settings({ appSettings, onSettingsChange, machineId, lic
           <button className={`settings-tab ${activeTab === 'staf' ? 'active' : ''}`} onClick={() => setActiveTab('staf')}>
             <Users size={18} /> Staf & Karyawan
           </button>
-          <button className={`settings-tab ${activeTab === 'api' ? 'active' : ''}`} onClick={() => setActiveTab('api')}>
-            <Webhook size={18} /> Pusat Integrasi
-          </button>
         </div>
 
         <div className="settings-content">
@@ -315,65 +312,6 @@ export default function Settings({ appSettings, onSettingsChange, machineId, lic
                 </div>
                 <button type="submit" className="btn-primary">Buat Akun Baru</button>
               </form>
-            </div>
-          )}
-
-          {activeTab === 'api' && (
-            <div className="settings-card glass" style={{ border: 'none', padding: 0, marginBottom: 0 }}>
-              <h3><Webhook size={20} /> Pusat API Key (WhatsApp Rotator)</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '24px' }}>Sistem otomatis memutar kunci jika terjadi limit/blokir saat mengirim notifikasi.</p>
-              {keyMsg && <div style={{ color: 'var(--success)', marginBottom: '16px' }}>{keyMsg}</div>}
-              
-              <form onSubmit={handleAddKey} style={{ marginBottom: '32px' }}>
-                <div className="settings-grid">
-                  <div className="input-group">
-                    <label>Nama Akun (Visual)</label>
-                    <input type="text" value={newKey.name} onChange={(e) => setNewKey({ ...newKey, name: e.target.value })} placeholder="Misal: WA Admin 1" required />
-                  </div>
-                  <div className="input-group">
-                    <label>API Key / Token Fonnte</label>
-                    <input type="text" value={newKey.api_key} onChange={(e) => setNewKey({ ...newKey, api_key: e.target.value })} placeholder="Paste Token..." required />
-                  </div>
-                </div>
-                <button type="submit" className="btn-outline" style={{ border: '1px solid var(--accent-color)', width: '100%' }}>+ Tambah Kunci Fonnte</button>
-              </form>
-
-              <div style={{ backgroundColor: 'var(--bg-primary)', borderRadius: `var(--border-radius)`, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
-                      <th style={{ padding: '12px' }}>Nama Akun</th>
-                      <th style={{ padding: '12px' }}>Status</th>
-                      <th style={{ padding: '12px' }}>Total Kirim</th>
-                      <th style={{ padding: '12px' }}>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {apiKeys.length === 0 ? (
-                      <tr>
-                        <td colSpan="4" style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada kunci terdaftar.</td>
-                      </tr>
-                    ) : (
-                      apiKeys.map(k => (
-                        <tr key={k.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                          <td style={{ padding: '12px' }}>{k.name}</td>
-                          <td style={{ padding: '12px' }}>
-                            <span style={{
-                              padding: '4px 8px', borderRadius: `var(--border-radius)`, fontSize: '0.7rem', fontWeight: 'bold',
-                              backgroundColor: k.status === 'Alive' ? '#dcfce7' : (k.status === 'Limit' ? '#fef08a' : '#fee2e2'),
-                              color: k.status === 'Alive' ? '#166534' : (k.status === 'Limit' ? '#854d0e' : '#991b1b')
-                            }}>{k.status}</span>
-                          </td>
-                          <td style={{ padding: '12px' }}>{k.used_count}x</td>
-                          <td style={{ padding: '12px' }}>
-                            <button onClick={() => handleDeleteKey(k.id)} style={{ padding: '6px 12px', background: 'var(--danger)', color: 'white', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '0.8rem' }}>Hapus</button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
             </div>
           )}
         </div>

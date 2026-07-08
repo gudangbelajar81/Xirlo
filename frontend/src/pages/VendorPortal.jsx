@@ -78,6 +78,18 @@ export default function VendorPortal() {
           <p style={{ color: 'var(--text-secondary)' }}>Mesin Pencetak Kunci Lisensi (Rahasia & Terenkripsi)</p>
         </div>
 
+        <div className="settings-card glass" style={{ borderTop: '4px solid var(--warning)', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h3 style={{ margin: 0, color: 'var(--accent-color)' }}>Omni-API Gateway</h3>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Kelola Token Fonnte (WhatsApp) Pusat</p>
+            </div>
+            <button className="btn-outline" onClick={() => window.location.href = '/settings/api-keys'} style={{ borderColor: 'var(--warning)', color: 'var(--warning)' }}>
+              Buka Gateway
+            </button>
+          </div>
+        </div>
+
         <div className="settings-card glass" style={{ borderTop: '4px solid var(--warning)' }}>
           <form onSubmit={generateLicense} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
