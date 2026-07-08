@@ -196,9 +196,10 @@ app.post('/api/register', async (req, res) => {
     // Generate App License logic (Cloud mode bypasses HWID)
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 7); // 7 Days Ultimate Trial
+    const ultimateFeatures = JSON.stringify(['feat_retail', 'feat_reports', 'feat_fnb', 'feat_shift_audit', 'feat_multi_user', 'feat_custom_theme']);
     await db.run(
-      'INSERT INTO app_license (tenant_id, machine_id, status, tier, installation_date, expiry_date) VALUES (?, ?, ?, ?, ?, ?)',
-      [tenantId, 'CLOUD-TENANT-' + tenantId, 'active', 'ULTIMATE', new Date().toISOString().slice(0, 19).replace('T', ' '), expiryDate.toISOString().slice(0, 19).replace('T', ' ')]
+      'INSERT INTO app_license (tenant_id, machine_id, status, tier, features, installation_date, expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [tenantId, 'CLOUD-TENANT-' + tenantId, 'active', 'ULTIMATE', ultimateFeatures, new Date().toISOString().slice(0, 19).replace('T', ' '), expiryDate.toISOString().slice(0, 19).replace('T', ' ')]
     );
 
     await db.run('COMMIT');
