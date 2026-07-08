@@ -57,7 +57,7 @@ function Sidebar({ user, setAuthInfo, toggleTheme, theme, license }) {
     if (requiredFeature && !features.includes(requiredFeature)) {
       alert(`🔒 FITUR TERKUNCI\n\nUps! Fitur ini membutuhkan hak akses tambahan.\n\nSilakan hubungi Admin untuk Upgrade Paket Lisensi Anda!`);
     } else if (path.startsWith('/dummy')) {
-      alert(`🚀 Segera Hadir!\n\nFitur eksklusif untuk ${appCode} ini sedang dikembangkan oleh Alio BOS.`);
+      alert(`🚀 Segera Hadir!\n\nFitur eksklusif untuk ${appCode} ini sedang dikembangkan oleh Tim Xirlo.`);
     } else {
       navigate(path);
     }
@@ -219,7 +219,7 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
             {appSettings?.logo_url && (
               <img src={appSettings.logo_url} alt="Logo" style={{ height: '32px', width: '32px', objectFit: 'contain', borderRadius: '4px' }} />
             )}
-            <strong style={{ fontSize: '1.2rem', color: 'var(--accent-color)' }}>{appSettings?.app_name || 'Alio BOS'}</strong>
+            <strong style={{ fontSize: '1.2rem', color: 'var(--accent-color)' }}>{appSettings?.app_name || 'Xirlo'}</strong>
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>

@@ -34,8 +34,8 @@ export default function Login({ setAuthInfo, appSettings }) {
   return (
     <div className="auth-container">
       <div className="auth-card glass">
-        <h2>{appSettings?.app_name || 'Alio BOS'}</h2>
-        <p>Premium Cashier System</p>
+        <h2>{appSettings?.app_name || 'Xirlo'}</h2>
+        <p>Si Kasir Paling Ramah ✨</p>
         
         {error && <div style={{ color: 'var(--danger)', marginBottom: '16px' }}>{error}</div>}
         
@@ -67,7 +67,7 @@ export default function Login({ setAuthInfo, appSettings }) {
               </button>
             </div>
             <div style={{ textAlign: 'right', marginTop: '8px' }}>
-              <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Alio%20BOS,%20saya%20lupa%20password%20akun%20saya.%20Mohon%20bantuannya." target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textDecoration: 'none' }}>Lupa Password?</a>
+              <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Xirlo,%20saya%20lupa%20password%20akun%20saya.%20Mohon%20bantuannya." target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textDecoration: 'none' }}>Lupa Password?</a>
             </div>
           </div>
           <button type="submit" className="btn-primary" disabled={loading}>

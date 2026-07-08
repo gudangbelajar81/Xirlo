@@ -28,7 +28,7 @@ function Register({ setAuthInfo }) {
       localStorage.setItem('user', JSON.stringify(data.user));
       setAuthInfo(data.user);
       
-      alert('Pendaftaran Berhasil! Anda mendapatkan Gratis Akses Sultan selama 7 Hari.');
+      alert('Pendaftaran Berhasil! Selamat datang di Xirlo. Anda mendapatkan Gratis Akses Sultan selama 7 Hari.');
       window.location.href = '/dashboard';
     } catch (err) {
       setError(err.message || 'Gagal mendaftar');
@@ -40,7 +40,7 @@ function Register({ setAuthInfo }) {
   return (
     <div className="auth-container">
       <div className="auth-card glass">
-        <h2>Daftar Alio BOS</h2>
+        <h2>Daftar Xirlo</h2>
         <p>Mulai Jualan Lebih Pintar Hari Ini</p>
         
         {error && <div style={{ color: 'var(--danger)', marginBottom: '16px' }}>{error}</div>}

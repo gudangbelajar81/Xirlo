@@ -72,7 +72,7 @@ function Pricing() {
     let planPrice = billingCycle === 'monthly' ? plan.priceMonthly : plan.priceYearly;
     if (plan.id === 'buyout') planPrice = 'Rp 2.000.000';
     
-    const text = `Halo Admin Alio BOS, saya ingin Upgrade Xirlo POS ke paket *${plan.name}* (${billingCycle === 'yearly' ? 'Tahunan' : 'Bulanan'}) dengan harga ${planPrice}. Mohon info pembayarannya.`;
+    const text = `Halo Admin Xirlo, saya ingin berlangganan Xirlo POS paket *${plan.name}* (${billingCycle === 'yearly' ? 'Tahunan' : 'Bulanan'}) dengan harga ${planPrice}. Mohon info pembayarannya.`;
     const waUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(text)}`;
     window.open(waUrl, '_blank');
   };
