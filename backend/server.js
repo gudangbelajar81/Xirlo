@@ -28,6 +28,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
+const { getHardwareId } = require('./utils/hardware');
+const { sendWhatsAppMessage } = require('./services/fonnte');
 const os = require('os');
 const axios = require('axios');
 
@@ -205,6 +207,11 @@ app.post('/api/register', async (req, res) => {
 
     // Generate JWT token so they can immediately login
     const token = jwt.sign({ id: userId, username: username, role: 'super_admin', tenant_id: tenantId }, JWT_SECRET, { expiresIn: '8h' });
+    
+    // Send Welcome WhatsApp Message via Fonnte in the background (no await needed for UI)
+    const welcomeMsg = `Halo *${storeName}*! 👋\n\nSelamat datang di *Alio BOS* (Premium Cashier System).\nAkun Anda telah aktif dengan Akses Sultan (Ultimate) selama *7 Hari Gratis*.\n\nDetail Login Anda:\n👤 Username: *${username}*\n🔑 Password: (Rahasia yang Anda buat)\n\nSilakan login dan mulai kelola bisnis Anda dengan lebih pintar!\n\n_Pesan otomatis dari Sistem_`;
+    sendWhatsAppMessage(phone, welcomeMsg);
+
     res.status(201).json({ message: 'Pendaftaran berhasil', token, user: { id: userId, username, role: 'super_admin', tenant_id: tenantId } });
   } catch (error) {
     await db.run('ROLLBACK');
