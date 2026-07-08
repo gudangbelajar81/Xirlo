@@ -176,8 +176,8 @@ app.post('/api/register', async (req, res) => {
 
     // Create Tenant
     const tenantResult = await db.run(
-      'INSERT INTO tenants (name, phone, status) VALUES (?, ?, ?)',
-      [storeName, phone, 'TRIAL']
+      'INSERT INTO tenants (store_name, owner_name, phone_number, plan_tier, status) VALUES (?, ?, ?, ?, ?)',
+      [storeName, ownerName || 'Admin', phone, 'ULTIMATE', 'active']
     );
     const tenantId = tenantResult.lastID;
 
