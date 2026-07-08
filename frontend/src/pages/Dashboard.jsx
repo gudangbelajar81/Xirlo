@@ -418,6 +418,15 @@ export default function Dashboard({ user, appSettings, license }) {
             </div>
           </div>
 
+        {/* Categories (Horizontal Scroll) */}
+        <div className="categories-scroll">
+          <button className="category-chip active">🍔 Semua</button>
+          <button className="category-chip">🍕 Makanan</button>
+          <button className="category-chip">🥤 Minuman</button>
+          <button className="category-chip">🍰 Snack</button>
+          <button className="category-chip">📦 Lainnya</button>
+        </div>
+
         {/* Grid Produk */}
         <div className="products-grid">
           {products.map(p => (
@@ -427,15 +436,22 @@ export default function Dashboard({ user, appSettings, license }) {
               onClick={() => addToCart(p)}
             >
               {p.stock <= 0 && <span className="out-of-stock-badge">HABIS</span>}
-              {p.image_url ? (
-                <img src={p.image_url} alt={p.name} className="product-image" />
-              ) : (
-                <div className="product-image-placeholder">No Image</div>
-              )}
+              <div className="product-image-container">
+                {p.image_url ? (
+                  <img src={p.image_url} alt={p.name} className="product-image" />
+                ) : (
+                  <div className="product-image-placeholder">No Image</div>
+                )}
+              </div>
               <div className="product-info">
                 <span className="product-name">{p.name}</span>
-                <span className="product-price">Rp {fmt(p.price)}</span>
-                <span className="product-stock">Sisa Stok: {p.stock}</span>
+                <span className="product-stock">Sisa: {p.stock}</span>
+                <div className="product-price-row">
+                  <span className="product-price">Rp {fmt(p.price)}</span>
+                  <button className="add-btn-small">
+                    <Plus size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
