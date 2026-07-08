@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { apiCall } from '../api';
 
 function Register({ setAuthInfo }) {
@@ -7,6 +8,7 @@ function Register({ setAuthInfo }) {
   const [phone, setPhone] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -22,7 +24,10 @@ function Register({ setAuthInfo }) {
         body: JSON.stringify({ storeName, ownerName: 'Admin', phone, username, password }),
       });
       
-      setAuthInfo(data.user, data.token);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setAuthInfo(data.user);
+      
       alert('Pendaftaran Berhasil! Anda mendapatkan Gratis Akses Sultan selama 7 Hari.');
       navigate('/dashboard');
     } catch (err) {
@@ -33,15 +38,15 @@ function Register({ setAuthInfo }) {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box slide-in">
-        <h1 className="login-title">Daftar Alio BOS</h1>
-        <p className="login-subtitle" style={{ marginTop: '-10px', marginBottom: '20px', color: 'var(--text-secondary)' }}>Mulai Jualan Lebih Pintar Hari Ini</p>
+    <div className="auth-container">
+      <div className="auth-card glass">
+        <h2>Daftar Alio BOS</h2>
+        <p>Mulai Jualan Lebih Pintar Hari Ini</p>
         
-        <form onSubmit={handleRegister} className="login-form">
-          {error && <div className="error-message">{error}</div>}
-          
-          <div className="form-group">
+        {error && <div style={{ color: 'var(--danger)', marginBottom: '16px' }}>{error}</div>}
+        
+        <form onSubmit={handleRegister}>
+          <div className="input-group">
             <label>Nama Toko</label>
             <input 
               type="text" 
@@ -52,7 +57,7 @@ function Register({ setAuthInfo }) {
             />
           </div>
           
-          <div className="form-group">
+          <div className="input-group">
             <label>Nomor WhatsApp</label>
             <input 
               type="text" 
@@ -63,8 +68,8 @@ function Register({ setAuthInfo }) {
             />
           </div>
 
-          <div className="form-group">
-            <label>Nama Pengguna (Username Login)</label>
+          <div className="input-group">
+            <label>Nama Pengguna (Username)</label>
             <input 
               type="text" 
               value={username} 
@@ -74,15 +79,22 @@ function Register({ setAuthInfo }) {
             />
           </div>
 
-          <div className="form-group">
+          <div className="input-group">
             <label>Kata Sandi (Password)</label>
-            <div className="password-input">
+            <div className="input-wrapper">
               <input 
-                type="password" 
+                type={showPassword ? "text" : "password"} 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
               />
+              <button 
+                type="button" 
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
