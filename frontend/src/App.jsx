@@ -150,9 +150,6 @@ function Sidebar({ user, setAuthInfo, toggleTheme, theme, license }) {
         {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
       </button>
 
-      <button className="nav-item mt-auto" onClick={handleLogout} title="Keluar">
-        <LogOut size={24} />
-      </button>
     </div>
   );
 }
