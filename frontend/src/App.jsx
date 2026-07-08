@@ -127,12 +127,23 @@ function Sidebar({ user, setAuthInfo, toggleTheme, theme, license }) {
         {user ? user.username.charAt(0).toUpperCase() : 'G'}
       </div>
       
+      {/* OWNER (super_admin) — Full menu access */}
       {user?.role === 'super_admin' && renderMenus()}
-
       {user?.role === 'super_admin' && (
         <button className={`nav-item ${location.pathname === '/settings' ? 'active' : ''}`} onClick={() => navigate('/settings')} title="Pengaturan">
           <SettingsIcon size={24} />
         </button>
+      )}
+
+      {/* KARYAWAN / KASIR — hanya akses kasir & logout */}
+      {user?.role === 'kasir' && (
+        <>
+          <button className={`nav-item ${location.pathname === '/dashboard' ? 'active' : ''}`} onClick={() => navigate('/dashboard')} title="Kasir">
+            <LayoutDashboard size={24} />
+          </button>
+          <div style={{ margin: '8px auto', width: '80%', height: '1px', background: 'var(--border-color)', opacity: 0.4 }} />
+          <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', textAlign: 'center', padding: '0 4px', lineHeight: 1.2 }}>KASIR</div>
+        </>
       )}
 
       <button className="nav-item" onClick={toggleTheme} title="Ganti Tema">
@@ -361,8 +372,11 @@ function App() {
 
   const fetchInitialData = async () => {
     try {
-      const licRes = await apiCall('/license/status');
-      setLicense(licRes);
+      const token = localStorage.getItem('token');
+      if (token) {
+        const licRes = await apiCall('/license/status');
+        setLicense(licRes);
+      }
       
       const setRes = await apiCall('/settings');
       setAppSettings(setRes);
