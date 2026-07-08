@@ -28,7 +28,6 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
-const { sendWhatsAppMessage } = require('./services/fonnte');
 const os = require('os');
 const axios = require('axios');
 
