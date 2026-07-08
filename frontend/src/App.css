@@ -641,6 +641,11 @@
   gap: 8px;
 }
 
+/* By default, hide the mobile FAB */
+.mobile-cart-fab {
+  display: none !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .cart-area {
@@ -675,13 +680,12 @@
     overflow-y: auto;
   }
 
-  /* Cart becomes a bottom drawer on tablet */
+  /* Cart is HIDDEN from normal flow on tablet/mobile — shown as floating sheet via FAB */
   .cart-area {
-    width: 100%;
-    max-height: 280px;
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    flex-shrink: 0;
+    display: none !important;
+  }
+  .mobile-cart-fab {
+    display: flex !important;
   }
 
   /* Sidebar becomes a bottom bar on tablet */
@@ -787,11 +791,7 @@
   z-index: 1;
 }
 
-@media (max-width: 480px) {
-  .mobile-cart-fab {
-    display: flex !important;
-  }
-}
+
 
 /* THERMAL PRINT STYLES */
 #print-area {

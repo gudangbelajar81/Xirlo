@@ -548,7 +548,6 @@ export default function Dashboard({ user, appSettings, license }) {
         <button
           onClick={() => setShowMobileCart(true)}
           style={{
-            display: 'none',
             position: 'fixed',
             bottom: '80px',
             right: '20px',
