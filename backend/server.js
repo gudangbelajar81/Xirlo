@@ -609,10 +609,10 @@ app.post('/api/shifts/close', authenticateToken, async (req, res) => {
 });
 
 // License API
-app.get('/api/license/status', async (req, res) => {
+app.get('/api/license/status', authenticateToken, async (req, res) => {
   try {
-    const rows = await db.all('SELECT * FROM app_license ORDER BY id ASC LIMIT 1');
-    if (rows.length === 0) return res.json({ access: true, mode: 'premium', tier: 'ULTIMATE', app_code: 'APP_KASIR' });
+    const rows = await db.all('SELECT * FROM app_license WHERE tenant_id = ? ORDER BY id ASC LIMIT 1', [req.user.tenant_id]);
+    if (rows.length === 0) return res.json({ access: true, mode: 'premium', tier: 'ULTIMATE', app_code: 'APP_KASIR', features: [] });
     const license = rows[0];
     
     if (license.status === 'active') {
@@ -630,7 +630,7 @@ app.get('/api/license/status', async (req, res) => {
       let parsedFeatures = [];
       try { parsedFeatures = JSON.parse(license.features || '[]'); } catch (e) {}
 
-      return res.json({ access: true, mode: 'premium', tier: license.tier || 'BASIC', features: parsedFeatures, expiry_date: license.expiry_date, app_code: license.app_code || 'APP_KASIR', machine_id: currentHardwareId });
+      return res.json({ access: true, mode: 'premium', tier: license.tier || 'BASIC', features: parsedFeatures, expiry_date: license.expiry_date, app_code: license.app_code || 'APP_KASIR', machine_id: license.machine_id });
     }
     
     const installDate = new Date(license.installation_date);
@@ -641,18 +641,18 @@ app.get('/api/license/status', async (req, res) => {
     if (diffDays > 5) {
       return res.json({ access: false, mode: 'expired', machine_id: license.machine_id, app_code: license.app_code || 'APP_KASIR' });
     } else {
-      return res.json({ access: true, mode: 'trial', days_left: 5 - diffDays + 1, tier: 'BASIC', app_code: license.app_code || 'APP_KASIR', machine_id: currentHardwareId });
+      return res.json({ access: true, mode: 'trial', days_left: 5 - diffDays + 1, tier: 'BASIC', app_code: license.app_code || 'APP_KASIR', machine_id: license.machine_id });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.post('/api/license/activate', async (req, res) => {
+app.post('/api/license/activate', authenticateToken, async (req, res) => {
   const { key } = req.body;
   if (!key) return res.status(400).json({ error: 'Key is required' });
   try {
-    const rows = await db.all('SELECT * FROM app_license ORDER BY id ASC LIMIT 1');
+    const rows = await db.all('SELECT * FROM app_license WHERE tenant_id = ? ORDER BY id ASC LIMIT 1', [req.user.tenant_id]);
     if (rows.length === 0) return res.status(400).json({ error: 'No license record found' });
     const license = rows[0];
     
