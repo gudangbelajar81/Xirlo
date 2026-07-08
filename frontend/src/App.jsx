@@ -156,7 +156,6 @@ function Sidebar({ user, setAuthInfo, toggleTheme, theme, license }) {
 
 function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
   const [theme, setTheme] = useState('dark');
-  const [showQr, setShowQr] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
   
   // --- PHASE 3: SHIFT AUDIT ---
@@ -262,21 +261,7 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
             <div className="user-profile">
               <span>Halo, <strong>{user ? user.username : 'Kasir Umum'}</strong></span>
             </div>
-            {user?.role === 'super_admin' && (
-              <button 
-                className="auth-btn" 
-                onClick={() => {
-                  if (!license?.features?.includes('feat_multi_user')) {
-                    alert('🔒 FITUR TERKUNCI\n\nFitur Multi-Akun (Karyawan) tidak tersedia di paket lisensi Anda. Silakan hubungi Admin untuk upgrade!');
-                  } else {
-                    setShowQr(true);
-                  }
-                }} 
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', borderRadius: `var(--border-radius)` }}>
-                <QrCode size={16} /> Karyawan
-                {!license?.features?.includes('feat_multi_user') && <Lock size={12} style={{ color: 'var(--warning)', marginLeft: '4px' }} />}
-              </button>
-            )}
+
             <button className="auth-btn logout-btn" onClick={() => {
               localStorage.removeItem('token');
               localStorage.removeItem('user');
@@ -291,25 +276,6 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
             className="app-watermark" 
             style={{ backgroundImage: `url(${appSettings.logo_url})` }}
           />
-        )}
-
-        {showQr && (
-          <div className="modal-overlay" style={{ zIndex: 9999 }}>
-            <div className="modal-content glass-dark" style={{ textAlign: 'center', maxWidth: '400px' }}>
-              <button className="close-btn" onClick={() => setShowQr(false)}><X size={24} /></button>
-              <h2 style={{ marginBottom: '20px', color: 'var(--accent-color)' }}>Scan untuk Login HP Karyawan</h2>
-              <div style={{ background: 'white', padding: '20px', borderRadius: `var(--border-radius)`, display: 'inline-block' }}>
-                <QRCodeSVG value={qrUrl} size={256} />
-              </div>
-              <p style={{ marginTop: '20px', color: 'var(--text-secondary)' }}>Akses langsung lewat browser HP:</p>
-              <a href={qrUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-color)', fontWeight: 'bold', fontSize: '1.2rem', textDecoration: 'none' }}>
-                {qrUrl}
-              </a>
-              <p style={{ fontSize: '0.8rem', marginTop: '12px', color: 'var(--text-muted)' }}>
-                *Pastikan Karyawan login menggunakan Username dan Password khusus Kasir.
-              </p>
-            </div>
-          </div>
         )}
 
         {/* MODAL SHIFT AUDIT */}
