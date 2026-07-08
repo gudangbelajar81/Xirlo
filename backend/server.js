@@ -151,17 +151,17 @@ app.post('/api/login', async (req, res) => {
     const user = rows[0];
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'Invalid credentials' });
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '12h' });
-    res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
+    const token = jwt.sign({ id: user.id, username: user.username, role: user.role, tenant_id: user.tenant_id }, JWT_SECRET, { expiresIn: '8h' });
+    res.json({ token, user: { id: user.id, username: user.username, role: user.role, tenant_id: user.tenant_id } });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // Settings API
-app.get('/api/settings', async (req, res) => {
+app.get('/api/settings', authenticateToken, async (req, res) => {
   try {
-    const rows = await db.all('SELECT * FROM settings WHERE id = 1');
+    const rows = await db.all('SELECT * FROM settings WHERE tenant_id = ?', [req.user.tenant_id]);
     res.json(rows[0] || {});
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -172,8 +172,8 @@ app.put('/api/settings', authenticateToken, requireSuperAdmin, async (req, res) 
   const { app_name, logo_url, theme_mode, phone_number, margin_alert_threshold, theme_color, border_radius, font_family } = req.body;
   try {
     await db.run(
-      'UPDATE settings SET app_name = ?, logo_url = ?, theme_mode = ?, phone_number = ?, margin_alert_threshold = ?, theme_color = ?, border_radius = ?, font_family = ? WHERE id = 1', 
-      [app_name, logo_url, theme_mode, phone_number, margin_alert_threshold ?? 10, theme_color, border_radius, font_family]
+      'UPDATE settings SET app_name = ?, logo_url = ?, theme_mode = ?, phone_number = ?, margin_alert_threshold = ?, theme_color = ?, border_radius = ?, font_family = ? WHERE tenant_id = ?', 
+      [app_name, logo_url, theme_mode, phone_number, margin_alert_threshold ?? 10, theme_color, border_radius, font_family, req.user.tenant_id]
     );
     res.json({ message: 'Settings updated' });
   } catch (error) {
@@ -264,8 +264,8 @@ app.put('/api/settings', authenticateToken, requireSuperAdmin, async (req, res) 
   app.get('/api/inventory/alerts/low-stock', authenticateToken, async (req, res) => {
     try {
       const rows = await db.all(`
-        SELECT * FROM products WHERE stock <= min_stock AND min_stock > 0
-      `);
+        SELECT * FROM products WHERE stock <= min_stock AND min_stock > 0 AND tenant_id = ?
+      `, [req.user.tenant_id]);
       res.json(rows);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -274,7 +274,7 @@ app.put('/api/settings', authenticateToken, requireSuperAdmin, async (req, res) 
 
   app.get('/api/products', authenticateToken, async (req, res) => {
   try {
-    const rows = await db.all('SELECT * FROM products');
+    const rows = await db.all('SELECT * FROM products WHERE tenant_id = ?', [req.user.tenant_id]);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -282,24 +282,24 @@ app.put('/api/settings', authenticateToken, requireSuperAdmin, async (req, res) 
 });
 
 app.post('/api/products', authenticateToken, requireSuperAdmin, async (req, res) => {
-  const { name, image_url, price, cost_price, stock, color_desc, category, barcode } = req.body;
+  const { name, image_url, price, cost_price, stock, min_stock, color_desc, category, barcode } = req.body;
   try {
     const result = await db.run(
-      'INSERT INTO products (name, image_url, price, stock, color_desc, category, cost_price, barcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [name, image_url, price, stock, color_desc, category, cost_price, barcode]
+      'INSERT INTO products (tenant_id, name, image_url, price, cost_price, stock, min_stock, color_desc, category, barcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [req.user.tenant_id, name, image_url, price, cost_price, stock, min_stock, color_desc, category, barcode]
     );
-    res.status(201).json({ id: result.lastID });
+    res.json({ id: result.lastID });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 app.put('/api/products/:id', authenticateToken, requireSuperAdmin, async (req, res) => {
-  const { name, image_url, price, cost_price, stock, color_desc, category, barcode } = req.body;
+  const { name, image_url, price, cost_price, stock, min_stock, color_desc, category, barcode } = req.body;
   try {
     await db.run(
-      'UPDATE products SET name = ?, image_url = ?, price = ?, stock = ?, color_desc = ?, category = ?, cost_price = ?, barcode = ? WHERE id = ?',
-      [name, image_url, price, stock, color_desc, category, cost_price, barcode, req.params.id]
+      'UPDATE products SET name = ?, image_url = ?, price = ?, cost_price = ?, stock = ?, min_stock = ?, color_desc = ?, category = ?, barcode = ? WHERE id = ? AND tenant_id = ?',
+      [name, image_url, price, cost_price, stock, min_stock, color_desc, category, barcode, req.params.id, req.user.tenant_id]
     );
     res.json({ message: 'Product updated' });
   } catch (error) {
@@ -309,7 +309,7 @@ app.put('/api/products/:id', authenticateToken, requireSuperAdmin, async (req, r
 
 app.delete('/api/products/:id', authenticateToken, requireSuperAdmin, async (req, res) => {
   try {
-    await db.run('DELETE FROM products WHERE id = ?', [req.params.id]);
+    await db.run('DELETE FROM products WHERE id = ? AND tenant_id = ?', [req.params.id, req.user.tenant_id]);
     res.json({ message: 'Product deleted' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -336,19 +336,21 @@ app.post('/api/transactions', authenticateToken, async (req, res) => {
     
     const cashierId = req.user ? req.user.id : 1; 
     const txResult = await db.run(
-      'INSERT INTO transactions (cashier_id, total_amount, payment_method) VALUES (?, ?, ?)',
-      [cashierId, total_amount, payment_method]
+      'INSERT INTO transactions (tenant_id, cashier_id, total_amount, payment_method) VALUES (?, ?, ?, ?)',
+      [req.user.tenant_id, cashierId, total_amount, payment_method]
     );
-    
     const transactionId = txResult.lastID;
-    
+
     for (const item of items) {
       await db.run(
-        'INSERT INTO transaction_items (transaction_id, product_id, qty, price_unit, cost_price) VALUES (?, ?, ?, ?, ?)',
-        [transactionId, item.product_id, item.qty, item.price, item.cost_price]
+        'INSERT INTO transaction_items (tenant_id, transaction_id, product_id, qty, price_unit) VALUES (?, ?, ?, ?, ?)',
+        [req.user.tenant_id, transactionId, item.product_id, item.qty, item.price]
       );
-      await db.run('UPDATE products SET stock = stock - ? WHERE id = ?', [item.qty, item.product_id]);
-          await db.run('INSERT INTO stock_history (product_id, qty_change, reason, user_name) VALUES (?, ?, \'Terjual di Kasir\', ?)', [item.product_id, -item.qty, req.user.username]);
+      await db.run('UPDATE products SET stock = stock - ? WHERE id = ? AND tenant_id = ?', [item.qty, item.product_id, req.user.tenant_id]);
+      
+      if (license?.features?.includes('feat_retail')) {
+          await db.run('INSERT INTO stock_history (tenant_id, product_id, qty_change, reason, user_name) VALUES (?, ?, ?, \'Terjual di Kasir\', ?)', [req.user.tenant_id, item.product_id, -item.qty, req.user.username]);
+      }
     }
     
     await db.run('COMMIT');
@@ -427,7 +429,7 @@ app.get('/api/transactions/summary', authenticateToken, requireSuperAdmin, async
 
 app.get('/api/transactions', authenticateToken, async (req, res) => {
   try {
-    const rows = await db.all('SELECT t.*, u.username as cashier_name FROM transactions t JOIN users u ON t.cashier_id = u.id ORDER BY t.created_at DESC LIMIT 50');
+    const rows = await db.all('SELECT t.*, u.username as cashier_name FROM transactions t JOIN users u ON t.cashier_id = u.id WHERE t.tenant_id = ? ORDER BY t.created_at DESC LIMIT 50', [req.user.tenant_id]);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -450,19 +452,19 @@ app.delete('/api/transactions/:id', authenticateToken, requireSuperAdmin, async 
     await db.run('BEGIN TRANSACTION');
     
     // Get transaction details for WA
-    const tx = await db.get('SELECT total_amount FROM transactions WHERE id = ?', [req.params.id]);
+    const tx = await db.get('SELECT total_amount FROM transactions WHERE id = ? AND tenant_id = ?', [req.params.id, req.user.tenant_id]);
     
     // 1. Revert stock
-    const items = await db.all('SELECT product_id, qty FROM transaction_items WHERE transaction_id = ?', [req.params.id]);
+    const items = await db.all('SELECT product_id, qty FROM transaction_items WHERE transaction_id = ? AND tenant_id = ?', [req.params.id, req.user.tenant_id]);
     for (const item of items) {
-      await db.run('UPDATE products SET stock = stock + ? WHERE id = ?', [item.qty, item.product_id]);
+      await db.run('UPDATE products SET stock = stock + ? WHERE id = ? AND tenant_id = ?', [item.qty, item.product_id, req.user.tenant_id]);
     }
     
     // 2. Delete items
-    await db.run('DELETE FROM transaction_items WHERE transaction_id = ?', [req.params.id]);
+    await db.run('DELETE FROM transaction_items WHERE transaction_id = ? AND tenant_id = ?', [req.params.id, req.user.tenant_id]);
     
     // 3. Delete transaction
-    await db.run('DELETE FROM transactions WHERE id = ?', [req.params.id]);
+    await db.run('DELETE FROM transactions WHERE id = ? AND tenant_id = ?', [req.params.id, req.user.tenant_id]);
     
     await db.run('COMMIT');
 
