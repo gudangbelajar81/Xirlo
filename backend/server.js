@@ -198,7 +198,7 @@ app.post('/api/register', async (req, res) => {
     expiryDate.setDate(expiryDate.getDate() + 7); // 7 Days Ultimate Trial
     await db.run(
       'INSERT INTO app_license (tenant_id, machine_id, status, tier, installation_date, expiry_date) VALUES (?, ?, ?, ?, ?, ?)',
-      [tenantId, 'CLOUD-TENANT-' + tenantId, 'active', 'ULTIMATE', new Date().toISOString(), expiryDate.toISOString()]
+      [tenantId, 'CLOUD-TENANT-' + tenantId, 'active', 'ULTIMATE', new Date().toISOString().slice(0, 19).replace('T', ' '), expiryDate.toISOString().slice(0, 19).replace('T', ' ')]
     );
 
     await db.run('COMMIT');
