@@ -781,11 +781,11 @@ app.use((req, res) => {
 async function startServer() {
   
   const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'password',
-    database: process.env.DB_NAME || 'xirlo',
-    port: process.env.DB_PORT || 3307,
+    host: process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
+    user: process.env.MYSQL_USER || process.env.DB_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD || 'password',
+    database: process.env.MYSQL_DATABASE || process.env.DB_NAME || 'xirlo',
+    port: process.env.MYSQL_PORT || process.env.DB_PORT || 3307,
     waitForConnections: true,
     connectionLimit: 10,
     multipleStatements: true
