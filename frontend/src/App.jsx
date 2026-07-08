@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Settings as SettingsIcon, LogOut, Moon, Sun, Lock, Package, ClipboardList, QrCode, Download, X, BarChart2 } from 'lucide-react';
+import { LayoutDashboard, Settings as SettingsIcon, LogOut, Moon, Sun, Lock, Package, ClipboardList, QrCode, Download, X, BarChart2, CreditCard } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -10,6 +10,7 @@ import History from './pages/History';
 import Reports from './pages/Reports';
 import ApiKeys from './pages/ApiKeys';
 import VendorPortal from './pages/VendorPortal';
+import Pricing from './pages/Pricing';
 import Paywall from './components/Paywall';
 import './App.css';
 import { apiCall } from './api';
@@ -110,6 +111,10 @@ function Sidebar({ user, setAuthInfo, toggleTheme, theme, license }) {
             </button>
           )}
 
+          {/* Pricing / Upgrade */}
+          <button className={`nav-item ${location.pathname === '/pricing' ? 'active' : ''}`} onClick={() => navigate('/pricing')} title="Langganan & Upgrade">
+            <CreditCard size={24} style={{ color: 'var(--success)' }} />
+          </button>
         </>
       );
     }
@@ -469,6 +474,14 @@ function App() {
             user?.role === 'super_admin' ? 
               <MainLayout user={user} setAuthInfo={setUser} appSettings={appSettings} license={license}>
                 <VendorPortal />
+              </MainLayout> 
+            : <Navigate to="/dashboard" />
+          } />
+
+          <Route path="/pricing" element={
+            user?.role === 'super_admin' ? 
+              <MainLayout user={user} setAuthInfo={setUser} appSettings={appSettings} license={license}>
+                <Pricing />
               </MainLayout> 
             : <Navigate to="/dashboard" />
           } />
