@@ -29,7 +29,7 @@ function Register({ setAuthInfo }) {
       setAuthInfo(data.user);
       
       alert('Pendaftaran Berhasil! Anda mendapatkan Gratis Akses Sultan selama 7 Hari.');
-      navigate('/dashboard');
+      window.location.href = '/dashboard';
     } catch (err) {
       setError(err.message || 'Gagal mendaftar');
     } finally {

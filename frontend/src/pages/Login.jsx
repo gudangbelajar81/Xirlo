@@ -23,7 +23,7 @@ export default function Login({ setAuthInfo, appSettings }) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setAuthInfo(data.user);
-      navigate('/dashboard');
+      window.location.href = '/dashboard';
     } catch (err) {
       setError(err.message);
     } finally {

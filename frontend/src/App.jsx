@@ -459,7 +459,7 @@ function App() {
           <Route path="/settings" element={
             user?.role === 'super_admin' ? 
               <MainLayout user={user} setAuthInfo={setUser} appSettings={appSettings} license={license}>
-                <Settings appSettings={appSettings} onSettingsChange={setAppSettings} machineId={license.machine_id} license={license} />
+                <Settings appSettings={appSettings} onSettingsChange={setAppSettings} machineId={license?.machine_id} license={license} />
               </MainLayout> 
             : <Navigate to="/dashboard" />
           } />
