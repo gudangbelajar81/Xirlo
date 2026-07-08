@@ -246,6 +246,20 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
               </button>
             )}
 
+            <button 
+              onClick={() => setShowQr(true)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                padding: '6px 12px', background: 'var(--bg-secondary)', 
+                color: 'var(--accent-color)', borderRadius: '20px', 
+                fontSize: '0.8rem', fontWeight: 'bold', border: '1px solid var(--accent-color)', cursor: 'pointer',
+                boxShadow: 'var(--shadow-sm)', transition: 'all 0.3s'
+              }}
+              title="Install Xirlo di HP / Tablet"
+            >
+              <Download size={16} /> Install App
+            </button>
+
             <div className="user-profile">
               <span>Halo, <strong>{user ? user.username : 'Kasir Umum'}</strong></span>
             </div>
@@ -351,6 +365,47 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
                 </p>
               </div>
               <button className="btn-primary" onClick={() => { setShiftResult(null); setShowOpenShift(true); setStartCash(''); setEndCash(''); }} style={{ width: '100%' }}>Selesai</button>
+            </div>
+          </div>
+        )}
+
+        {/* --- INSTALL APP MODAL --- */}
+        {showQr && (
+          <div className="modal-overlay" style={{ zIndex: 9999 }}>
+            <div className="modal-content text-center" style={{ padding: '32px 24px', maxWidth: '350px', background: 'var(--bg-dark-panel)', border: '1px solid var(--accent-color)', borderRadius: '20px', position: 'relative', overflow: 'hidden' }}>
+              <button 
+                onClick={() => setShowQr(false)}
+                style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
+              >
+                <X size={20} />
+              </button>
+              
+              <div style={{ background: 'var(--accent-color)', height: '4px', width: '100%', position: 'absolute', top: 0, left: 0 }} />
+
+              <h3 style={{ marginBottom: '16px', color: 'var(--text-primary)', fontSize: '1.2rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                <Download size={20} color="var(--accent-color)"/> Install Xirlo
+              </h3>
+              
+              <div style={{ background: 'white', padding: '16px', borderRadius: '16px', display: 'inline-block', marginBottom: '24px', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
+                 <QRCodeSVG value="https://xirlo.vercel.app" size={160} />
+              </div>
+
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.5 }}>
+                Scan QR ini di HP Karyawan, lalu klik "<strong>Tambahkan ke Layar Utama</strong>" (Install).
+              </p>
+
+              <button 
+                className="btn-primary" 
+                onClick={() => alert('🛠️ File APK Standalone sedang disiapkan oleh tim Xirlo. \n\nUntuk sementara, silakan gunakan fitur Install langsung dari Web Browser (PWA) yang jauh lebih ringan & selalu update otomatis!')}
+                style={{ 
+                  width: '100%', padding: '14px', borderRadius: '12px', 
+                  display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px',
+                  boxShadow: '0 8px 16px rgba(212, 175, 55, 0.2)',
+                  textTransform: 'uppercase', letterSpacing: '0.5px'
+                }}
+              >
+                <Download size={18} /> Download APK Android
+              </button>
             </div>
           </div>
         )}
