@@ -209,9 +209,7 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
   };
   // ----------------------------
 
-  const location = window.location;
-  const localIp = location.hostname;
-  const qrUrl = `http://${localIp}:5173`;
+  const qrUrl = window.location.origin; // Dynamically uses https://xirlo.vercel.app in production
 
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -296,17 +294,20 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
         )}
 
         {showQr && (
-          <div className="modal-overlay">
+          <div className="modal-overlay" style={{ zIndex: 9999 }}>
             <div className="modal-content glass-dark" style={{ textAlign: 'center', maxWidth: '400px' }}>
               <button className="close-btn" onClick={() => setShowQr(false)}><X size={24} /></button>
               <h2 style={{ marginBottom: '20px', color: 'var(--accent-color)' }}>Scan untuk Login HP Karyawan</h2>
               <div style={{ background: 'white', padding: '20px', borderRadius: `var(--border-radius)`, display: 'inline-block' }}>
                 <QRCodeSVG value={qrUrl} size={256} />
               </div>
-              <p style={{ marginTop: '20px', color: 'var(--text-secondary)' }}>Akses dari HP satu WiFi:</p>
+              <p style={{ marginTop: '20px', color: 'var(--text-secondary)' }}>Akses langsung lewat browser HP:</p>
               <a href={qrUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-color)', fontWeight: 'bold', fontSize: '1.2rem', textDecoration: 'none' }}>
                 {qrUrl}
               </a>
+              <p style={{ fontSize: '0.8rem', marginTop: '12px', color: 'var(--text-muted)' }}>
+                *Pastikan Karyawan login menggunakan Username dan Password khusus Kasir.
+              </p>
             </div>
           </div>
         )}
