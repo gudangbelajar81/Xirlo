@@ -157,6 +157,7 @@ function Sidebar({ user, setAuthInfo, toggleTheme, theme, license }) {
 function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
   const [theme, setTheme] = useState('dark');
   const [showQr, setShowQr] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
   
   // --- PHASE 3: SHIFT AUDIT ---
   const [shift, setShift] = useState(null);
@@ -247,7 +248,7 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
             )}
 
             <button 
-              onClick={() => setShowQr(true)}
+              onClick={() => setShowInstallModal(true)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
                 padding: '6px 12px', background: 'var(--bg-secondary)', 
@@ -370,11 +371,11 @@ function MainLayout({ children, user, setAuthInfo, appSettings, license }) {
         )}
 
         {/* --- INSTALL APP MODAL --- */}
-        {showQr && (
+        {showInstallModal && (
           <div className="modal-overlay" style={{ zIndex: 9999 }}>
             <div className="modal-content text-center" style={{ padding: '32px 24px', maxWidth: '350px', background: 'var(--bg-dark-panel)', border: '1px solid var(--accent-color)', borderRadius: '20px', position: 'relative', overflow: 'hidden' }}>
               <button 
-                onClick={() => setShowQr(false)}
+                onClick={() => setShowInstallModal(false)}
                 style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
               >
                 <X size={20} />
