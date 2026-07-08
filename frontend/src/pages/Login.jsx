@@ -66,6 +66,9 @@ export default function Login({ setAuthInfo, appSettings }) {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            <div style={{ textAlign: 'right', marginTop: '8px' }}>
+              <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Alio%20BOS,%20saya%20lupa%20password%20akun%20saya.%20Mohon%20bantuannya." target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textDecoration: 'none' }}>Lupa Password?</a>
+            </div>
           </div>
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? 'Memproses...' : 'Masuk'}
