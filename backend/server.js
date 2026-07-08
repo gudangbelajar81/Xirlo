@@ -553,11 +553,6 @@ app.get('/api/license/status', async (req, res) => {
     if (rows.length === 0) return res.json({ access: true, mode: 'premium', tier: 'ULTIMATE', app_code: 'APP_KASIR' });
     const license = rows[0];
     
-    const currentHardwareId = getHardwareId();
-    if (license.machine_id !== currentHardwareId) {
-      return res.json({ access: false, mode: 'hardware_mismatch', machine_id: currentHardwareId });
-    }
-    
     if (license.status === 'active') {
       if (license.expiry_date) {
         // Appending 'Z' ensures JS parses the string as UTC rather than Local Time
