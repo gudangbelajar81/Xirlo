@@ -812,24 +812,10 @@ async function startServer() {
   };
 
 
-  await db.exec(`
-    
     // Phase 7 migrations
-    try { await db.exec('ALTER TABLE products ADD COLUMN min_stock INTEGER DEFAULT 0'); } catch(e) {}
+    try { await db.exec('ALTER TABLE products ADD COLUMN min_stock INT DEFAULT 0'); } catch(e) {}
     
     await db.exec(`
-      CREATE TABLE IF NOT EXISTS stock_history (
-        id INT PRIMARY KEY AUTO_INCREMENT,
-        product_id INTEGER,
-        qty_change INTEGER,
-        reason TEXT,
-        user_name TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(product_id) REFERENCES products(id)
-      );
-    `);
-
-      
       CREATE TABLE IF NOT EXISTS stock_history (
         id INT PRIMARY KEY AUTO_INCREMENT,
         product_id INTEGER,
