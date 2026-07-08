@@ -11,6 +11,7 @@ import Reports from './pages/Reports';
 import ApiKeys from './pages/ApiKeys';
 import VendorPortal from './pages/VendorPortal';
 import Pricing from './pages/Pricing';
+import Register from './pages/Register';
 import Paywall from './components/Paywall';
 import './App.css';
 import { apiCall } from './api';
@@ -417,11 +418,12 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={!user ? <Login setAuthInfo={setUser} appSettings={appSettings} /> : <Navigate to="/dashboard" />} />
-          
           <Route path="/" element={
-            user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+            user ? <Navigate to="/dashboard" /> : <Login setAuthInfo={setUser} appSettings={appSettings} />
           } />
-
+          <Route path="/register" element={
+            user ? <Navigate to="/dashboard" /> : <Register setAuthInfo={setUser} />
+          } />
           <Route path="/dashboard" element={
             user ? 
               <MainLayout user={user} setAuthInfo={setUser} appSettings={appSettings} license={license}>

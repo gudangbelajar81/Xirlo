@@ -158,6 +158,60 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Register API (SaaS Onboarding)
+app.post('/api/register', async (req, res) => {
+  const { storeName, ownerName, phone, username, password } = req.body;
+  if (!storeName || !username || !password || !phone) {
+    return res.status(400).json({ error: 'Data tidak lengkap. Harap isi semua kolom wajib.' });
+  }
+
+  try {
+    // Check if username already exists
+    const users = await db.all('SELECT id FROM users WHERE username = ?', [username]);
+    if (users.length > 0) return res.status(400).json({ error: 'Username sudah dipakai toko lain.' });
+
+    await db.run('BEGIN TRANSACTION');
+
+    // Create Tenant
+    const tenantResult = await db.run(
+      'INSERT INTO tenants (name, phone, status) VALUES (?, ?, ?)',
+      [storeName, phone, 'TRIAL']
+    );
+    const tenantId = tenantResult.lastID;
+
+    // Default settings for new tenant
+    await db.run(
+      'INSERT INTO settings (tenant_id, app_name, theme_color) VALUES (?, ?, ?)',
+      [tenantId, storeName, '#D4AF37']
+    );
+
+    // Create Admin User for this tenant
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const userResult = await db.run(
+      'INSERT INTO users (tenant_id, username, password, role) VALUES (?, ?, ?, ?)',
+      [tenantId, username, hashedPassword, 'super_admin']
+    );
+    const userId = userResult.lastID;
+
+    // Generate App License logic (Cloud mode bypasses HWID)
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 7); // 7 Days Ultimate Trial
+    await db.run(
+      'INSERT INTO app_license (tenant_id, machine_id, status, tier, installation_date, expiry_date) VALUES (?, ?, ?, ?, ?, ?)',
+      [tenantId, 'CLOUD-TENANT-' + tenantId, 'active', 'ULTIMATE', new Date().toISOString(), expiryDate.toISOString()]
+    );
+
+    await db.run('COMMIT');
+
+    // Generate JWT token so they can immediately login
+    const token = jwt.sign({ id: userId, username: username, role: 'super_admin', tenant_id: tenantId }, JWT_SECRET, { expiresIn: '8h' });
+    res.status(201).json({ message: 'Pendaftaran berhasil', token, user: { id: userId, username, role: 'super_admin', tenant_id: tenantId } });
+  } catch (error) {
+    await db.run('ROLLBACK');
+    res.status(500).json({ error: 'Gagal mendaftar: ' + error.message });
+  }
+});
+
 // Settings API
 app.get('/api/settings', authenticateToken, async (req, res) => {
   try {

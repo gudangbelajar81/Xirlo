@@ -63,8 +63,14 @@ export default function Login({ setAuthInfo, appSettings }) {
               </button>
             </div>
           </div>
-          <button type="submit" className="auth-btn">Masuk</button>
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? 'Memproses...' : 'Masuk'}
+          </button>
         </form>
+
+        <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
+          Belum punya akun? <span onClick={() => navigate('/register')} style={{ color: 'var(--accent-color)', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Gratis</span>
+        </div>
       </div>
     </div>
   );
