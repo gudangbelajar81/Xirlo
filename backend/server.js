@@ -208,7 +208,7 @@ app.post('/api/register', async (req, res) => {
     const token = jwt.sign({ id: userId, username: username, role: 'super_admin', tenant_id: tenantId }, JWT_SECRET, { expiresIn: '8h' });
     
     // Send Welcome WhatsApp Message via Fonnte in the background (no await needed for UI)
-    const welcomeMsg = `Halo *${storeName}*! 👋\n\nSelamat datang di *Alio BOS* (Premium Cashier System).\nAkun Anda telah aktif dengan Akses Sultan (Ultimate) selama *7 Hari Gratis*.\n\nDetail Login Anda:\n👤 Username: *${username}*\n🔑 Password: (Rahasia yang Anda buat)\n\nSilakan login dan mulai kelola bisnis Anda dengan lebih pintar!\n\n_Pesan otomatis dari Sistem_`;
+    const welcomeMsg = `Halo *${storeName}*! 👋\n\nSelamat datang di *Xirlo* — Si Kasir Paling Ramah! 🎉\nAkun Anda telah aktif dengan Akses Sultan (Ultimate) selama *7 Hari Gratis*.\n\nDetail Login Anda:\n👤 Username: *${username}*\n🔑 Password: (Rahasia yang Anda buat)\n\n🔗 Login di: https://xirlo.vercel.app\n\nSilakan login dan mulai kelola bisnis Anda dengan lebih pintar!\n\n_Pesan otomatis dari Sistem Xirlo_`;
     sendWhatsAppMessage(phone, welcomeMsg);
 
     res.status(201).json({ message: 'Pendaftaran berhasil', token, user: { id: userId, username, role: 'super_admin', tenant_id: tenantId } });
@@ -881,7 +881,7 @@ async function startServer() {
   
   const settingsCount = await db.get('SELECT COUNT(*) as count FROM settings');
   if (settingsCount.count === 0) {
-    await db.run('INSERT INTO settings (id, app_name) VALUES (1, "Alio BOS")');
+    await db.run('INSERT INTO settings (id, app_name) VALUES (1, "Xirlo")');
   }
 
   const licenseCount = await db.get('SELECT COUNT(*) as count FROM app_license');
